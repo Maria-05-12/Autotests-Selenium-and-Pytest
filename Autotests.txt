@@ -1,0 +1,36 @@
+# Написать тесты с использованием selenium и pytest.
+# Открыть страницу с таблицей и найти ячейку в
+# первом столбце, содержащую заданное значение
+
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import pytest
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+@pytest.fixture()
+def driver():
+    driver = webdriver.Chrome()
+    driver.maximize_window()
+    yield driver
+    driver.quit()
+
+def test_table(driver):
+    driver.get("https://developer.mozilla.org/ru/docs/Learn/HTML/Tables")
+    driver.implicitly_wait(10)
+
+    table_search = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[4]/div/aside/nav/div/div[2]/ol/li[6]/details/ol/li[2]/a")
+    table_search.send_keys(Keys.ENTER)
+
+    dashboard_url = "https://developer.mozilla.org/ru/docs/Learn/HTML/Tables/Basics"
+    WebDriverWait(driver, 10).until(EC.url_to_be(dashboard_url))
+    assert driver.current_url == dashboard_url
+
+    table_cell = driver.find_element(By.XPATH, "/html/body/div[1]/div/div[4]/main/article/section[9]/div/figure/table/thead/tr/th[1]")
+    table_cell_text = "Animals"
+    print('Текст в элементе: ', table_cell.text)
+    driver.implicitly_wait(10)
+    # WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.LINK_TEXT, "Animals")))
+
